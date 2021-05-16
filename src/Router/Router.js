@@ -1,10 +1,14 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import PageContainer from '../components/common/PageContainer';
-import HomePage from '../pages/HomePage';
-import ContactsPage from '../pages/ContactsPage';
-import RegisterPage from '../pages/RegisterPage';
-import LoginPage from '../pages/LoginPage';
+import PrivateRoute from '../components/PrivateRoute';
+import PublicRoute from '../components/PublicRoute';
+
+
+const HomePage = lazy(() => import('../pages/HomePage' /* webpackChunkName: "home-page" */));
+const ContactsPage = lazy(() => import('../pages/ContactsPage' /* webpackChunkName: "contact-page" */));
+const RegisterPage = lazy(() => import('../pages/RegisterPage' /* webpackChunkName: "register-page" */));
+const LoginPage = lazy(() => import('../pages/LoginPage' /* webpackChunkName: "login-page" */));
 
 
 export const paths = {
@@ -17,13 +21,16 @@ export const paths = {
 const Router = () => {
   return (
     <PageContainer>
+
+      <Suspense fallback={<p align="center">Загружаем...</p>}>
       <Switch>
         <Route exact path={paths.MAIN} component={HomePage} />
-        <Route path={paths.CONTACTS} component={ContactsPage} />
-        <Route path={paths.REGISTER} component={RegisterPage} />
-        <Route path={paths.LOGIN} component={LoginPage} />
+        <PrivateRoute path={paths.CONTACTS} component={ContactsPage} redirectTo={paths.LOGIN}/>
+        <PublicRoute path={paths.REGISTER} restricted component={RegisterPage} redirectTo={paths.CONTACTS}/>
+        <PublicRoute path={paths.LOGIN} restricted component={LoginPage} redirectTo={paths.CONTACTS}/>
         <Redirect to="/" />
       </Switch>
+      </Suspense>
     </PageContainer>
   );
 };

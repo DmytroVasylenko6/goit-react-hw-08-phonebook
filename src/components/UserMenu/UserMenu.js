@@ -1,7 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { authSelectors } from '../../redux/auth';
+import { authSelectors, authOperations } from '../../redux/auth';
 import defaultAvatar from './default-avatar.png';
+
 
 const styles = {
     container: {
@@ -32,7 +33,9 @@ const mapStateToProps = (state) => ({
     avatar: defaultAvatar
 })
 
+const mapDispatchToProps = {
+    onLogout: authOperations.logOut
+};
 
 
-
-export default connect(mapStateToProps)(UserMenu);
+export default connect(mapStateToProps, mapDispatchToProps)(UserMenu);
